@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
-import serverComm.ServerConn;
+import serverComm.ServerCom;
 
 public class Main {
 
@@ -31,7 +31,7 @@ public class Main {
 			{
 				BasePassFinder.in=new Scanner(System.in);
 				/*
-				System.out.println("Introduce la institución (Ej. 'itmexicali'):");
+				System.out.println("Introduce la instituciï¿½n (Ej. 'itmexicali'):");
 				Instituto = BasePassFinder.in.next().trim();
 				*/
 
@@ -73,7 +73,7 @@ public class Main {
 		checkUpdateAvailable();
 
 		/*if(Instituto == null && useSwing)
-			Instituto = JOptionPane.showInputDialog(null,"Introduce la institución (Ej. 'itmexicali'):",
+			Instituto = JOptionPane.showInputDialog(null,"Introduce la instituciï¿½n (Ej. 'itmexicali'):",
 					"Busqueda de NIP",JOptionPane.QUESTION_MESSAGE).trim();
 */
 		if(noControl == null && useSwing)
@@ -93,7 +93,7 @@ public class Main {
 		pf.setNcontrol(noControl);
 
 		if(useSwing)
-			JOptionPane.showMessageDialog(null,"Al cerrar esta ventana, se iniciará la busqueda\n" +
+			JOptionPane.showMessageDialog(null,"Al cerrar esta ventana, se iniciarï¿½ la busqueda\n" +
 					"En 5 minutos aproximadamente aparecera una ventana con el NIP\n" +
 					"No es recomendable hacer mas de 1 busqueda a la vez",
 					"Busqueda de NIP",JOptionPane.INFORMATION_MESSAGE);
@@ -105,20 +105,20 @@ public class Main {
 		System.out.println("\t\tCurrent Version: "+CURRENT_VERSION);
 		try {
 			String query = "snit=VERSION";
-			HttpURLConnection connection = ServerConn.Connect(ServerConn.metPOST, BasePassFinder.recordUrl,query);
-			String res = ServerConn.getResponse(connection);
+			HttpURLConnection connection = ServerConn.shared().openConnection(ServerCom.Method.POST,query);
+			String res = ServerCom.getResponse(connection);
 			System.out.println("response: "+res);
             if( CURRENT_VERSION < Integer.parseInt(res)){
             	System.out.println("V Newest Version: \'" +res+"\'");
             	if(useSwing){
-            		JOptionPane.showMessageDialog(null,"Se ha encontrado una versión "+
+            		JOptionPane.showMessageDialog(null,"Se ha encontrado una versiï¿½n "+
             				"mas reciente y es necesario actualizar.\n" +
-            				"Puedes descargar la actualización en: http://bit.ly/15WxeUT",
+            				"Puedes descargar la actualizaciï¿½n en: http://bit.ly/15WxeUT",
         					"Busqueda de NIP",JOptionPane.WARNING_MESSAGE);
             	}
             	else{
-            		System.out.println("Se ha encontrado una versión mas reciente y es necesario actualizar.\n" +
-            				"Puedes descargar la actualización en: http://bit.ly/15WxeUT");
+            		System.out.println("Se ha encontrado una versiï¿½n mas reciente y es necesario actualizar.\n" +
+            				"Puedes descargar la actualizaciï¿½n en: http://bit.ly/15WxeUT");
             	}
             	System.exit(0);
             }

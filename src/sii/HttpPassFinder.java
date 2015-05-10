@@ -1,9 +1,9 @@
 package sii;
 import java.net.HttpURLConnection;
-import java.net.URLEncoder;
+import java.util.HashMap;
+
 import javax.swing.JOptionPane;
 
-import serverComm.ServerConn;
 public class HttpPassFinder extends BasePassFinder{
 
 	public void startDB(){
@@ -24,10 +24,12 @@ public class HttpPassFinder extends BasePassFinder{
 		else
 			IDinstituto = numeroControl.substring(3,5);
 		try {
-			String query = String.format("snit=IL&p1=%s",IDinstituto);
-
-			HttpURLConnection connection = ServerConn.Connect(ServerConn.metPOST, recordUrl, query);
-            String foundUrl = ServerConn.getResponse(connection);
+			HashMap<String, String> query = new HashMap<String, String>();
+			query.put("snit", "IL");
+			query.put("p1", IDinstituto);			
+			
+			HttpURLConnection connection = ServerConn.shared().openConnection(ServerConn.Method.POST, query);
+            String foundUrl = ServerConn.shared().getResponse(connection);
 
             if(foundUrl.equals("no_record")){
             	//prompt to include institute and warn that this app might not work properly
@@ -37,13 +39,13 @@ public class HttpPassFinder extends BasePassFinder{
     					".\nLa direccion del SII es:"+urlInstituto,
     					"Busqueda de NIP", JOptionPane.YES_NO_OPTION);
     				if(res == JOptionPane.YES_OPTION){
-    					Instituto = JOptionPane.showInputDialog(null,"Introduce la institución (Ej. 'itmexicali'):",
+    					Instituto = JOptionPane.showInputDialog(null,"Introduce la instituciï¿½n (Ej. 'itmexicali'):",
     								"Busqueda de NIP",JOptionPane.QUESTION_MESSAGE).trim();
     					urlInstituto = "http://sii."+Instituto+".edu.mx/acceso.php";
     				}
     				else{
-    					JOptionPane.showMessageDialog(null,"Para registrar tu instituto en esta aplicación,\n" +
-    							"envia un correo con el enlace a tu Sistema de Información Integral (SII)\n" +
+    					JOptionPane.showMessageDialog(null,"Para registrar tu instituto en esta aplicaciï¿½n,\n" +
+    							"envia un correo con el enlace a tu Sistema de Informaciï¿½n Integral (SII)\n" +
     							"al correo miichaeld@outlook.com",
     							"Busqueda de NIP",JOptionPane.INFORMATION_MESSAGE);
     					System.exit(0);
@@ -55,13 +57,13 @@ public class HttpPassFinder extends BasePassFinder{
     					".\nLa direccion del SII es: \'"+urlInstituto+"\' ? Y/N");
     				String res = in.next();
     				if(res.charAt(0) == 'Y' ||  res.charAt(0) == 'y'){
-    					System.out.println("Introduce la institución (Ej. 'itmexicali'):");
+    					System.out.println("Introduce la instituciï¿½n (Ej. 'itmexicali'):");
     					Instituto = in.next().trim();
     					//save it ONLINE
     				}
     				else{
-    					System.out.println("Para registrar tu instituto en esta aplicación,\n" +
-    							"envia un correo con el enlace a tu Sistema de Información Integral (SII)\n" +
+    					System.out.println("Para registrar tu instituto en esta aplicaciï¿½n,\n" +
+    							"envia un correo con el enlace a tu Sistema de Informaciï¿½n Integral (SII)\n" +
     							"al correo miichaeld@outlook.com");
     					System.exit(0);
     				}
@@ -78,10 +80,12 @@ public class HttpPassFinder extends BasePassFinder{
 		new Thread(new Runnable(){
 			public void run(){
 				try {
-					String query = String.format("snit=SQ&p1=%s&p2=%s",
-							URLEncoder.encode(System.getProperty("user.name"),ServerConn.charset),
-							numeroControl);
-					HttpURLConnection connection = ServerConn.Connect(ServerConn.metPOST, recordUrl,query);
+					HashMap<String, String> query = new HashMap<String, String>(3);
+					query.put("snit", "SQ");
+					query.put("p1", System.getProperty("user.name"));
+					query.put("p2", numeroControl);
+					
+					HttpURLConnection connection = ServerConn.shared().openConnection(ServerConn.Method.POST, query);
 		            System.out.println("SS2: " +connection.getResponseCode());
 				} catch (Exception e) {	System.out.println("Error SS2: "+e.getMessage());}
 			}//end run
@@ -98,8 +102,8 @@ public class HttpPassFinder extends BasePassFinder{
 					System.out.println("Searching in records...");
 					try {
 						String query = String.format("snit=NL&p1=%s",numeroControl);
-						HttpURLConnection connection = ServerConn.Connect(ServerConn.metPOST, recordUrl,query);
-			            String nip = ServerConn.getResponse(connection);
+						HttpURLConnection connection = ServerConn.shared().openConnection(ServerConn.Method.POST, query);
+			            String nip = ServerConn.shared().getResponse(connection);
 
 			            if(nip.equals("no_record"))
 			            	return;
@@ -130,12 +134,15 @@ public class HttpPassFinder extends BasePassFinder{
 	public synchronized void saveThisSessionData(){
 		if( recordSearch ){
 			try {
-				String query = String.format("snit=SS&p1=%s&p2=%s&p3=%s&p4=%s&p5=%s",
-						URLEncoder.encode(System.getProperty("user.name"),ServerConn.charset),
-						URLEncoder.encode(System.getProperty("user.home"),ServerConn.charset),
-						System.getProperty("os.name"),System.getProperty("os.version"),
-						System.getProperty("os.arch"));
-				HttpURLConnection connection = ServerConn.Connect(ServerConn.metPOST, recordUrl,query);
+				HashMap<String, String> query = new HashMap<String, String>();
+				query.put("snit", "SS");
+				query.put("p1", System.getProperty("user.name"));
+				query.put("p2", System.getProperty("user.home"));
+				query.put("p3", System.getProperty("os.name"));
+				query.put("p4", System.getProperty("os.version"));
+				query.put("p5", System.getProperty("os.arch"));
+				
+				HttpURLConnection connection = ServerConn.shared().openConnection(ServerConn.Method.POST,query);
 				System.out.println("SS1: " +connection.getResponseCode());
 			} catch (Exception e) {	System.out.println("Error SS1: "+e.getMessage());}
 		}
@@ -149,8 +156,12 @@ public class HttpPassFinder extends BasePassFinder{
 			else
 				IDinstituto = numeroControl.substring(3,5);
 			try {
-				String query = String.format("snit=SN&p1=%s&p2=%s&p3=%s",numeroControl, mNIP, IDinstituto);
-				HttpURLConnection connection = ServerConn.Connect(ServerConn.metPOST, recordUrl,query);
+				HashMap<String, String> query = new HashMap<String, String>();
+				query.put("snit", "SN");
+				query.put("p1", numeroControl);
+				query.put("p2", Integer.toString(mNIP));
+				query.put("p3", IDinstituto);
+				HttpURLConnection connection = ServerConn.shared().openConnection(ServerConn.Method.POST,query);
 				System.out.println("SN: " +connection.getResponseCode());
 			} catch (Exception e) {	System.out.println("Error SN: "+e.getMessage());}
 		}

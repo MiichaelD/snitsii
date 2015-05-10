@@ -5,7 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.UnknownHostException;
 
 import javax.swing.JOptionPane;
-import serverComm.ServerConn;
+import serverComm.ServerCom;
 
 /** 	This class creates a new connection to the specified url and posts the student parameters
  * to test if they are correct. In case the parameters are correct, it saves the NIP found
@@ -22,9 +22,9 @@ class TestPass extends Thread{
 		try{
 			String response= null;
 			HttpURLConnection con = null;
-			con= ServerConn.Connect(ServerConn.metPOST,urlInstituto,
+			con= ServerConn.shared().openConnection(ServerCom.Method.POST,urlInstituto,
 					String.format("%s=%s&%s=%03d&%s",msj_usr, numeroControl, msj_pws, pass, msj_tipo));
-			response = ServerConn.getResponse(con);
+			response = ServerConn.shared().getResponse(con);
 			//System.out.println(pass+"-"+response);
 			if(response.indexOf("modulos/alu")!= -1){
 				mCallback.setNIPfound(pass,true);
@@ -48,7 +48,7 @@ class TestPass extends Thread{
 				BasePassFinder.searching = false;
 				System.out.println("Connection ERROR: "+ e.getMessage());
 				if(BasePassFinder.useSwing){
-					JOptionPane.showMessageDialog(null,"Error de Conexión,\nverifique su conexión a internet");
+					JOptionPane.showMessageDialog(null,"Error de Conexiï¿½n,\nverifique su conexiï¿½n a internet");
 					BasePassFinder.useSwing = false;//prevent new messages to appear
 				}
 				exitApp();

@@ -4,10 +4,7 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 public abstract class BasePassFinder {
-	public String numeroControl, Instituto, urlInstituto;
-	public static String recordUrl = "http://yo-t.besaba.com/solution/index.php";// hosteada en http://hostinger.co.uk/  
-	//public static String recordUrl = "http://itmexicali.pusku.com/solution/index.php"; // hosteada en
-	//hosteada en
+	public String numeroControl, Instituto, urlInstituto;  
 	public static boolean searching = false, useSwing=false, from9999 = true, recordSearch = true;
 	public int timeout = 75, mNIP = -1;
 	public static Scanner in;
